@@ -5,6 +5,7 @@
 local f1040Form = require("2019/f1040")
 local w2Form = require("2019/w2")
 local scheduleAForm = require("2019/scheduleA")
+local scheduleBForm = require("2019/scheduleB")
 
 -- Load all the user-defined data that is defined in a seaprate file.
 local data = require("data")
@@ -18,8 +19,11 @@ end
 local scheduleA = scheduleAForm.New()
 scheduleA:AddInputs(data.scheduleA)
 
+local scheduleB = scheduleBForm.New()
+scheduleB:AddInputs(data.scheduleB)
+
 local f1040 = f1040Form.New()
-f1040:Attach(w2s, scheduleA)
+f1040:Attach(w2s, scheduleA, scheduleB)
 f1040:AddInputs(data.f1040)
 
 -- print out the completed form and all attachments

@@ -60,9 +60,24 @@ local nodes = {
   end,  
 },
 {
+  line = "2a",
+  title = "Tax-exempt interest",
+  id = "8dae0c43-f221-425b-96fd-a273c537ab2a",
+  calculate = function(self)
+    return 0 -- todo
+  end,
+},
+{
   line = "2b",
   title = "Taxable interest. Attach Sch. B",
   id = "874a8cb0-2aec-466c-8599-c384963ede89",
+  calculate = function(self)
+    local scheduleB = self:GetAttachment("f975d4b9-950e-4a55-8307-71d1362f97b4")
+    if not scheduleB then
+      return 0
+    end
+    return scheduleB:GetNodeValue("4")
+  end,
 },
 {
   line = "3b",

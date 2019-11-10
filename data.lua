@@ -10,7 +10,13 @@ return {
   scheduleA = {
     ["1"] = 31.121,
   },
-  f1040 = {
+  scheduleB = {
+    ["1"] = {
+      Chase = 321.21,
+      ["Capitol One"] = 1132.12,
+    },
+  },
+    f1040 = {
     filingStatus = "Married Filing Jointly",
     ["2b"] = 1234.12,
   },   
