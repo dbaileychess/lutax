@@ -20,6 +20,7 @@ end
 function mt:AddNode(nodeDef) 
   local n = node.New(nodeDef)
   self.nodes[n.line] = n
+  self.nodes[#self.nodes + 1] = n -- add in sorted order as well
   registry.Add(n, self)
 end
 
@@ -40,6 +41,13 @@ end
 
 function mt:GetAttachments(documentId)
   return self.attachments[documentId]
+end
+
+function mt:GetAttachment(documentId)
+  local attachment = self.attachments[documentId]
+  if not attachment then return nil end
+  assert(#attachment == 1, "Only one attachment of id: ",documentId," is expected")
+  return attachment[1]
 end
 
 function mt:AddInputs(data)
@@ -63,11 +71,11 @@ function mt:SetValue(identifier, value)
   node:SetValue(value)    
 end
 
-function mt:GetNodeValue(lineOrUuid)
-  local node = self.nodes[lineOrUuid]
+function mt:GetNodeValue(id)
+  local node = self.nodes[id]
   if not node then 
     -- if we couldn't find it locally, try searching the registry
-    node = registry.Get(lineOrUuid, self)
+    node = registry.Get(id, self)
   end
   if not node then return nil end
   return node(self)
@@ -75,13 +83,21 @@ end
 
 function mt:SumNodeValues(...)
   local value = 0
-  for _,line in ipairs{...} do
-    local nodeValue = self:GetNodeValue(line)
+  for _,id in ipairs{...} do
+    local nodeValue = self:GetNodeValue(id)
     -- todo: we should assert when a node is missing, that means
     -- document is not correctly defined.
     if nodeValue then 
-      value = value + self:GetNodeValue(line)
+      value = value + self:GetNodeValue(id)
     end
+  end
+  return value
+end
+
+function mt:SubtractNodeValue(baseId, ...)
+  local value = self:GetNodeValue(baseId)
+  for _,id in ipairs{...} do
+    value = value - self:GetNodeValue(id)
   end
   return value
 end
@@ -98,7 +114,7 @@ function mt:PrintOutput(includeAttachments)
   -- Print our own data out
   local usertext = self.userName and " ["..self.userName.."] " or " "
   print("== Form: "..self.name..usertext.."==")
-  for k,v in pairs(self.nodes) do
+  for k,v in ipairs(self.nodes) do
     print("Line = ", v:GetLine(), " value = ",v:GetValue(self))
   end
   print()

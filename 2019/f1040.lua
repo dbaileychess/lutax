@@ -17,17 +17,17 @@ m.FilingStatus = {
 local mt = {}
 setmetatable(mt, {__index = getmetatable(document)})
 
-local filingStatus = {
+local nodes = {
+{
     line = "filingStatus",
     title = "Filing status:",
     id = "aebf6a6e-c83f-434f-8925-9e54b610a94f",
-}
-
-local line1 = {
+},
+{
     line = "1",
     title = "Wages, salaries, tips, etc. Attach Form(s) W-2",
     id = "61b95c2d-0ea8-46e6-8c5f-d5a50c6c2842",
-    transform = function(self)
+    calculate = function(self)
       local value = 0
       -- grab all the W2s and sum Line 1
       for _,w2 in ipairs(self:GetAttachments("856f8635-364b-4bab-a437-eabd9749e08e")) do
@@ -35,56 +35,70 @@ local line1 = {
       end
       return value
     end,  
-}
-
-local line2b = {
+},
+{
     line = "2b",
     title = "Taxable interest. Attach Sch. B",
     id = "874a8cb0-2aec-466c-8599-c384963ede89",
-}
-
-local line3b = {
+},
+{
   line = "3b",
   title = "Ordinary dividends. Attach Sch. B",
   id = "dc94b674-6de6-45ba-a200-d85050efaa6c",
-}
-
-local line7b = {
+},
+{
     line = "7b",
     title = "Total income",
     id = "ac15b3f2-6a5a-42a5-9451-914492aeed4e",    
-    transform = function(self) 
+    calculate = function(self) 
       return self:SumNodeValues("1", "2b", "3b", "4b", "4d", "5b", "6", "7a")
     end,
-}
-
-local line9 = {
-    line = "9",
-    title = "Standard deduction or itemized deductions",
-    id = "cc7cac22-e1f8-4035-945c-332134e6911e",
-    transform = function(self)
-      local value = self:GetNodeValue("filingStatus")
-      local filingData = m.FilingStatus[value]
-      assert(filingData, "Not a valid filing status: "..value)
-      local stdDeduct = filingData.stdDeduct
-      return math.max(stdDeduct, 20123)
-    end,
+},
+{
+  line = "8a",
+  title = "Adjustments to income from Schedule 1, line 22",
+  id = "c8b0317c-e812-402f-bb65-61248466f412",
+  calculate = function(self)
+    local schedule1 = self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed") -- Schedule 1
+    if not schedule1 then
+      return 0
+    end
+      return schedule1:GetNodevalue("22")
+  end,
+},
+{
+  line = "8b",
+  title = "Subtract line 8a from line 7b. This is your adjusted gross income",
+  id = "bf50bd82-46b3-4740-a47d-71e956746ca6",
+  calculate = function(self)
+    return self:SubtractNodeValue("7b", "8a")
+  end,
+},
+{
+  line = "9",
+  title = "Standard deduction or itemized deductions",
+  id = "cc7cac22-e1f8-4035-945c-332134e6911e",
+  calculate = function(self)
+    local value = self:GetNodeValue("filingStatus")
+    local filingData = m.FilingStatus[value]
+    assert(filingData, "Not a valid filing status: "..value)
+    local stdDeduct = filingData.stdDeduct
+    return math.max(stdDeduct, 20123)
+  end,
+},
 }
 
 function m.New(userName)
   local o = document.New({
       userName = userName,
-      name = "Form 1040 (2019)",
+      name = "Form 1040 (2019) Draft",
       id = "bacc2341-acf8-49e6-b1f8-e4807bd29469",
       })
   setmetatable(o, {__index = mt})
   
-  o:AddNode(filingStatus)
-  o:AddNode(line1)
-  o:AddNode(line2b)
-  o:AddNode(line3b)
-  o:AddNode(line7b)
-  o:AddNode(line9)
+  for _,nodeData in ipairs(nodes) do
+    o:AddNode(nodeData)
+  end
   
   return o
 end
