@@ -1,6 +1,6 @@
 local document = require("document")
 local node = require("node")
-local sum = require("transformation").newAggregate
+
 
 local m = {}
 local mt = {}

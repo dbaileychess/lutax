@@ -1,9 +1,5 @@
 local document = require("document")
 local node = require("node")
-local sum = require("transformation").newAggregate
-local max = require("transformation").max
-local getNode = require("transformation").getNode
-local ofAttached = require("transformation").ofAttached
 
 local m = {}
 
