@@ -7,17 +7,17 @@ function m.New(data)
     line = data.line,
     id = data.id,
     transform = data.transform,
+    default = data.default or 0
     }
-  setmetatable(o, {__index = mt})
+  setmetatable(o, {__index = mt, __call = mt.GetValue})
   return o
 end
 
 function mt:GetValue(context)
-  local value
   if self.transform then
-    value = self.transform:Compute(context)
-    self.value = value
+    self.value = self.transform(context)
   end
+  if not self.value then return self.default end
   return self.value
 end
 

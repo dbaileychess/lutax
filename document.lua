@@ -7,9 +7,11 @@ setmetatable(m, mt)
 
 function m.New(data)
   local o = {
+    userName = data.userName,
     name = data.name,
     id = data.id,
     nodes = {},
+    attachments = {},
     }
   setmetatable(o, {__index = mt})
   return o
@@ -19,6 +21,27 @@ function mt:AddNode(nodeDef)
   local n = node.New(nodeDef)
   self.nodes[n.line] = n
   registry.Add(n, self)
+end
+
+function mt:Attach(...)
+  for k,v in ipairs{...} do
+    local curValue = self.attachments[v.id]
+    if curValue then
+      curValue[#curValue + 1] = v
+    else 
+      self.attachments[v.id] = {v}
+    end
+  end
+end
+
+function mt:GetAttachments(documentId)
+  return self.attachments[documentId]
+end
+
+function mt:AddInputs(data)
+  for k,v in pairs(data) do
+    self:SetValue(k, v)
+  end
 end
 
 function mt:SetValue(identifier, value)
@@ -36,10 +59,28 @@ function mt:SetValue(identifier, value)
   node:SetValue(value)    
 end
 
-function mt:PrintOutput()
+function mt:GetNodeValue(line)
+  local node = self.nodes[line]
+  if not node then return nil end
+  return node(self)
+end
+
+function mt:PrintOutput(includeAttachments)
+  if includeAttachments then
+    for _,attachments in pairs(self.attachments) do
+      for _,attachment in ipairs(attachments) do
+        attachment:PrintOutput(includeAttachments)
+      end
+    end
+  end
+  
+  -- Print our own data out
+  local usertext = self.userName and " ["..self.userName.."] " or " "
+  print("== Form: "..self.name..usertext.."==")
   for k,v in pairs(self.nodes) do
     print("Line = ", v:GetLine(), " value = ",v:GetValue(self))
   end
+  print()
 end
 
 return m

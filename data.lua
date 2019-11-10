@@ -8,6 +8,7 @@ return {
     }
   },
   f1040 = {
+    filingStatus = "Married Filing Jointly",
     ["2b"] = 1234.12,
   },   
 }

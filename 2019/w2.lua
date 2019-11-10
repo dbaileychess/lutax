@@ -12,8 +12,9 @@ local n1 = {
     id = "50f56bb9-e5ef-4fec-b8c0-b19abf5ae72d",
 }
 
-function m.New()
+function m.New(userName)
   local o = document.New({
+      userName = userName,
       name = "W-2 (2019)",
       id = "856f8635-364b-4bab-a437-eabd9749e08e",
       })
