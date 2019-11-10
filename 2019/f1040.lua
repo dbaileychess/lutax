@@ -1,13 +1,16 @@
+-- draft as of September 11, 2019
+-- https://www.irs.gov/pub/irs-dft/f1040--dft.pdf
+
 local document = require("document")
 local node = require("node")
 
 local m = {}
 
 m.FilingStatus = {
-  ["Single"] = {id = 1, stdDeduct = 12000,},
-  ["Married Filing Jointly"] = {id = 2, stdDeduct = 24000,},
-  ["Married Filing Separately"] = {id = 3, stdDeduct = 12000,},
-  ["Head of household"] = {id = 4, stdDeduct = 18000,},
+  ["Single"] = {id = 1, stdDeduct = 12200,},
+  ["Married Filing Jointly"] = {id = 2, stdDeduct = 24400,},
+  ["Married Filing Separately"] = {id = 3, stdDeduct = 12200,},
+  ["Head of household"] = {id = 4, stdDeduct = 18350,},
   ["Qualifying window(er)"] = {id = 5, stdDeduct = 24000,},
 }  
 
@@ -36,29 +39,27 @@ local line1 = {
 
 local line2b = {
     line = "2b",
-    title = "Taxable interest",
+    title = "Taxable interest. Attach Sch. B",
     id = "874a8cb0-2aec-466c-8599-c384963ede89",
 }
 
 local line3b = {
   line = "3b",
-  title = "Ordinary dividends",
+  title = "Ordinary dividends. Attach Sch. B",
   id = "dc94b674-6de6-45ba-a200-d85050efaa6c",
 }
 
-local line6 = {
-    line = "6",
+local line7b = {
+    line = "7b",
     title = "Total income",
     id = "ac15b3f2-6a5a-42a5-9451-914492aeed4e",    
     transform = function(self) 
-      return self:GetNodeValue("1") + 
-      self:GetNodeValue("874a8cb0-2aec-466c-8599-c384963ede89") + 
-      self:GetNodeValue("3b")
+      return self:SumNodeValues("1", "2b", "3b", "4b", "4d", "5b", "6", "7a")
     end,
 }
 
-local line8 = {
-    line = "8",
+local line9 = {
+    line = "9",
     title = "Standard deduction or itemized deductions",
     id = "cc7cac22-e1f8-4035-945c-332134e6911e",
     transform = function(self)
@@ -82,8 +83,8 @@ function m.New(userName)
   o:AddNode(line1)
   o:AddNode(line2b)
   o:AddNode(line3b)
-  o:AddNode(line6)
-  o:AddNode(line8)
+  o:AddNode(line7b)
+  o:AddNode(line9)
   
   return o
 end

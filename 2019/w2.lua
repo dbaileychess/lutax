@@ -12,7 +12,7 @@ local n1 = {
     id = "50f56bb9-e5ef-4fec-b8c0-b19abf5ae72d",
 }
 
-function m.New(userName)
+function m.New(userName, inputData)
   local o = document.New({
       userName = userName,
       name = "W-2 (2019)",
@@ -21,7 +21,9 @@ function m.New(userName)
   setmetatable(o, {__index = mt})
   
   o:AddNode(n1)
-  
+  if inputData then
+    o:AddInputs(inputData)
+  end
   return o
 end
 

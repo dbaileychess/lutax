@@ -25,11 +25,15 @@ end
 
 function mt:Attach(...)
   for k,v in ipairs{...} do
-    local curValue = self.attachments[v.id]
-    if curValue then
-      curValue[#curValue + 1] = v
-    else 
-      self.attachments[v.id] = {v}
+    if not v.id and type(v) == "table" then
+      self:Attach(table.unpack(v))
+    else
+      local curValue = self.attachments[v.id]
+      if curValue then
+        curValue[#curValue + 1] = v
+      else 
+        self.attachments[v.id] = {v}
+      end
     end
   end
 end
@@ -67,6 +71,19 @@ function mt:GetNodeValue(lineOrUuid)
   end
   if not node then return nil end
   return node(self)
+end
+
+function mt:SumNodeValues(...)
+  local value = 0
+  for _,line in ipairs{...} do
+    local nodeValue = self:GetNodeValue(line)
+    -- todo: we should assert when a node is missing, that means
+    -- document is not correctly defined.
+    if nodeValue then 
+      value = value + self:GetNodeValue(line)
+    end
+  end
+  return value
 end
 
 function mt:PrintOutput(includeAttachments)
