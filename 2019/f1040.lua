@@ -69,11 +69,8 @@ local nodes = {
   title = "Taxable interest. Attach Sch. B",
   id = "874a8cb0-2aec-466c-8599-c384963ede89",
   calculate = function(self)
-    local scheduleB = self:GetAttachment("f975d4b9-950e-4a55-8307-71d1362f97b4")
-    if not scheduleB then
-      return 0
-    end
-    return scheduleB:GetNodeValue("4")
+    -- grab Schedule B line 4
+    return self:GetAttachment("f975d4b9-950e-4a55-8307-71d1362f97b4", "4") or 0
   end,
 },
 {
@@ -89,17 +86,18 @@ local nodes = {
   line = "3b",
   title = "Ordinary dividends. Attach Sch. B",
   id = "dc94b674-6de6-45ba-a200-d85050efaa6c",
+  calculate = function(self)
+    -- grab all the 1099-int and sum Line 1a
+    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "1a")
+  end,
 },
 {
   line = "7a",
   title = "Other income from Schedule 1, line 9",
   id = "c94916ad-823d-4a0a-a79e-55f205c38dcf",
   calculate = function(self)
-    local schedule1 = self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed")
-    if not schedule1 then
-      return 0
-    end
-    return schedule1:GetNodeValue("9")
+    -- grab Schedule 1 line 9
+    return self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed4", "9") or 0
   end,
 },
 {
@@ -115,11 +113,8 @@ local nodes = {
   title = "Adjustments to income from Schedule 1, line 22",
   id = "c8b0317c-e812-402f-bb65-61248466f412",
   calculate = function(self)
-    local schedule1 = self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed") -- Schedule 1
-    if not schedule1 then
-      return 0
-    end
-      return schedule1:GetNodeValue("22")
+    -- grab Schedule 1 line 22
+    return self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed", "22")    
   end,
 },
 {

@@ -60,11 +60,14 @@ function mt:GetBackwardsAttachment(documentId)
   return self.backAttachments[documentId]
 end
 
-function mt:GetAttachment(documentId)
+function mt:GetAttachment(documentId, nodeId)
   local attachment = self.attachments[documentId]
   if not attachment then return nil end
   assert(#attachment == 1, "Only one attachment of id: ",documentId," is expected")
-  return attachment[1]
+  
+  attachment = attachment[1]
+  if nodeId then return attachment[nodeId] end
+  return attachment
 end
 
 function mt:AddInputs(data)
