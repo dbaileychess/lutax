@@ -119,6 +119,18 @@ function mt:SubtractNodeValue(baseId, ...)
   return value
 end
 
+-- For all attachments given the specified attachmentId, sum all the node values
+-- passed into the varags ...
+function mt:SumAllAttachments(attachmentId, ...)
+  local attachments = self:GetAttachments(attachmentId)
+  if not attachments then return 0 end
+  local value = 0
+  for _,attachment in ipairs(attachments) do
+    value = value + attachment:SumNodeValues(...)
+  end
+  return value
+end
+
 function mt:PrintOutput(includeAttachments)
   if includeAttachments then
     for _,attachments in pairs(self.attachments) do

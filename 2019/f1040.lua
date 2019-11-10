@@ -51,12 +51,8 @@ local nodes = {
   title = "Wages, salaries, tips, etc. Attach Form(s) W-2",
   id = "61b95c2d-0ea8-46e6-8c5f-d5a50c6c2842",
   calculate = function(self)
-    local value = 0
-    -- grab all the W2s and sum Line 1
-    for _,w2 in ipairs(self:GetAttachments("856f8635-364b-4bab-a437-eabd9749e08e")) do
-      value = value + w2:GetNodeValue("1")
-    end
-    return value
+     -- grab all the W2s and sum Line 1
+    return self:SumAllAttachments("856f8635-364b-4bab-a437-eabd9749e08e", "1")
   end,  
 },
 {
@@ -64,7 +60,8 @@ local nodes = {
   title = "Tax-exempt interest",
   id = "8dae0c43-f221-425b-96fd-a273c537ab2a",
   calculate = function(self)
-    return 0 -- todo
+    -- grab all the 1099-int and sum Line 8
+    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "8")
   end,
 },
 {
@@ -77,6 +74,15 @@ local nodes = {
       return 0
     end
     return scheduleB:GetNodeValue("4")
+  end,
+},
+{
+  line = "3a",
+  title = "Qualified Dividends",
+  id = "2d8d4d93-b00a-48fc-ba94-9fe01136fdb4",
+  calculate = function(self)
+    -- grab all the 1099-int and sum Line 1b
+    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "1b")
   end,
 },
 {
