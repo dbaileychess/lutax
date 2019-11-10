@@ -12,9 +12,16 @@ function m.New(data)
     id = data.id,
     nodes = {},
     attachments = {},
+    backAttachments = {},
     }
   setmetatable(o, {__index = mt})
   return o
+end
+
+function mt:AddNodes(nodeDefs)
+  for _,nodeData in ipairs(nodeDefs) do
+    self:AddNode(nodeData)
+  end
 end
 
 function mt:AddNode(nodeDef) 
@@ -35,12 +42,22 @@ function mt:Attach(...)
       else 
         self.attachments[v.id] = {v}
       end
+      v:BackwardsAttach(self)
     end
   end
 end
 
 function mt:GetAttachments(documentId)
   return self.attachments[documentId]
+end
+
+function mt:BackwardsAttach(other)
+  -- todo: can you have multiple backwards attachments of the same type?
+  self.backAttachments[other.id] = other
+end
+
+function mt:GetBackwardsAttachment(documentId)
+  return self.backAttachments[documentId]
 end
 
 function mt:GetAttachment(documentId)

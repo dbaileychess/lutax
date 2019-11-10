@@ -4,19 +4,22 @@
 -- person-to-person.
 local f1040Form = require("2019/f1040")
 local w2Form = require("2019/w2")
+local scheduleAForm = require("2019/scheduleA")
 
 -- Load all the user-defined data that is defined in a seaprate file.
 local data = require("data")
 
 -- Construct the forms from the user-defined data.
-
 local w2s = {}
 for name, w2Data in pairs(data.w2) do
   w2s[#w2s+1] = w2Form.New(name, w2Data)
 end
 
+local scheduleA = scheduleAForm.New()
+scheduleA:AddInputs(data.scheduleA)
+
 local f1040 = f1040Form.New()
-f1040:Attach(w2s)
+f1040:Attach(w2s, scheduleA)
 f1040:AddInputs(data.f1040)
 
 -- print out the completed form and all attachments
