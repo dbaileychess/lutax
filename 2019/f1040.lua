@@ -52,7 +52,7 @@ local line6 = {
     id = "ac15b3f2-6a5a-42a5-9451-914492aeed4e",    
     transform = function(self) 
       return self:GetNodeValue("1") + 
-      self:GetNodeValue("2b") + 
+      self:GetNodeValue("874a8cb0-2aec-466c-8599-c384963ede89") + 
       self:GetNodeValue("3b")
     end,
 }

@@ -59,8 +59,12 @@ function mt:SetValue(identifier, value)
   node:SetValue(value)    
 end
 
-function mt:GetNodeValue(line)
-  local node = self.nodes[line]
+function mt:GetNodeValue(lineOrUuid)
+  local node = self.nodes[lineOrUuid]
+  if not node then 
+    -- if we couldn't find it locally, try searching the registry
+    node = registry.Get(lineOrUuid, self)
+  end
   if not node then return nil end
   return node(self)
 end
