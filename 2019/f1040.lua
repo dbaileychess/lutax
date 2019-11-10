@@ -5,6 +5,11 @@ local document = require("document")
 local node = require("node")
 
 local m = {}
+local mt = {
+  name = "Form 1040 (2019) Draft",
+  id = "Form 1040",
+}
+setmetatable(mt, {__index = getmetatable(document)})
 
 local singleTax = function(amount) 
   if amount < 100000 then
@@ -36,9 +41,6 @@ m.FilingStatus = {
   ["Qualifying window(er)"] = {id = 5, stdDeduct = 24000,},
 }  
 
-local mt = {}
-setmetatable(mt, {__index = getmetatable(document)})
-
 local nodes = {
 {
   line = "filingStatus",
@@ -51,8 +53,8 @@ local nodes = {
   title = "Wages, salaries, tips, etc. Attach Form(s) W-2",
   id = "61b95c2d-0ea8-46e6-8c5f-d5a50c6c2842",
   calculate = function(self)
-     -- grab all the W2s and sum Line 1
-    return self:SumAllAttachments("856f8635-364b-4bab-a437-eabd9749e08e", "1")
+     -- grab all the W-2s and sum Line 1
+    return self:SumAllAttachments("W-2", "1")
   end,  
 },
 {
@@ -61,7 +63,7 @@ local nodes = {
   id = "8dae0c43-f221-425b-96fd-a273c537ab2a",
   calculate = function(self)
     -- grab all the 1099-int and sum Line 8
-    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "8")
+    return self:SumAllAttachments("1099-INT", "8")
   end,
 },
 {
@@ -70,7 +72,7 @@ local nodes = {
   id = "874a8cb0-2aec-466c-8599-c384963ede89",
   calculate = function(self)
     -- grab Schedule B line 4
-    return self:GetAttachment("f975d4b9-950e-4a55-8307-71d1362f97b4", "4") or 0
+    return self:GetAttachment("Schedule B", "4") or 0
   end,
 },
 {
@@ -79,7 +81,7 @@ local nodes = {
   id = "2d8d4d93-b00a-48fc-ba94-9fe01136fdb4",
   calculate = function(self)
     -- grab all the 1099-int and sum Line 1b
-    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "1b")
+    return self:SumAllAttachments("1099-INT", "1b")
   end,
 },
 {
@@ -88,7 +90,7 @@ local nodes = {
   id = "dc94b674-6de6-45ba-a200-d85050efaa6c",
   calculate = function(self)
     -- grab all the 1099-int and sum Line 1a
-    return self:SumAllAttachments("7153de10-e3a4-4a2b-acc0-6e2ede67564e", "1a")
+    return self:SumAllAttachments("1099-INT", "1a")
   end,
 },
 {
@@ -97,7 +99,7 @@ local nodes = {
   id = "c94916ad-823d-4a0a-a79e-55f205c38dcf",
   calculate = function(self)
     -- grab Schedule 1 line 9
-    return self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed4", "9") or 0
+    return self:GetAttachment("Schedule 1", "9") or 0
   end,
 },
 {
@@ -114,7 +116,7 @@ local nodes = {
   id = "c8b0317c-e812-402f-bb65-61248466f412",
   calculate = function(self)
     -- grab Schedule 1 line 22
-    return self:GetAttachment("fd2558cb-6ef3-46eb-bb2d-0c79bc0b92ed", "22")    
+    return self:GetAttachment("Schedule 1", "22")    
   end,
 },
 {
@@ -171,8 +173,6 @@ local nodes = {
 function m.New(userName)
   local o = document.New({
       userName = userName,
-      name = "Form 1040 (2019) Draft",
-      id = "bacc2341-acf8-49e6-b1f8-e4807bd29469",
       })
   setmetatable(o, {__index = mt})
   

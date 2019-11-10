@@ -2,7 +2,10 @@ local document = require("document")
 local node = require("node")
 
 local m = {}
-local mt = {}
+local mt = {
+  name = "Schedule A (2019)",
+  id = "Schedule A",
+}
 setmetatable(mt, {__index = getmetatable(document)})
 
 local nodes = {
@@ -16,7 +19,7 @@ local nodes = {
   title = "Enter amount from Form 1040 or 1040-SR, line 8b",
   id = "9956ec99-6bac-406a-b219-2bfac8214cfb",
   calculate = function(self)
-    local f1040 = self:GetBackwardsAttachment("bacc2341-acf8-49e6-b1f8-e4807bd29469")
+    local f1040 = self:GetBackwardsAttachment("Form 1040")
     assert(f1040, "Form 1040 needs to be backwards attached to this document")
     return f1040:GetNodeValue("8b")
   end,
@@ -44,10 +47,8 @@ local nodes = {
 
 function m.New(userName, inputData)
   local o = document.New({
-      userName = userName,
-      name = "Schedule A (2019)",
-      id = "678aa2ad-e975-449c-a294-b3d3c4c729a2",
-      })
+    userName = userName,
+  })
   setmetatable(o, {__index = mt})
   
   o:AddNodes(nodes)

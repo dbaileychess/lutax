@@ -2,7 +2,10 @@ local document = require("document")
 local node = require("node")
 
 local m = {}
-local mt = {}
+local mt = { 
+  name = "W-2 (2019)",
+  id = "W-2",
+}
 setmetatable(mt, {__index = getmetatable(document)})
 
 local nodes = {
@@ -15,10 +18,8 @@ local nodes = {
 
 function m.New(userName, inputData)
   local o = document.New({
-      userName = userName,
-      name = "W-2 (2019)",
-      id = "856f8635-364b-4bab-a437-eabd9749e08e",
-      })
+    userName = userName,
+  })
   setmetatable(o, {__index = mt})
   
   o:AddNodes(nodes)

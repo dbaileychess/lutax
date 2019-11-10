@@ -64,7 +64,6 @@ function mt:GetAttachment(documentId, nodeId)
   local attachment = self.attachments[documentId]
   if not attachment then return nil end
   assert(#attachment == 1, "Only one attachment of id: ",documentId," is expected")
-  
   attachment = attachment[1]
   if nodeId then return attachment[nodeId] end
   return attachment
