@@ -166,10 +166,68 @@ local nodes = {
     local taxableIncome = self:GetNodeValue("11b")
     local filingData = self:GetFilingStatusData()
     return filingData.tax(taxableIncome)
-  end  
+  end,
+  -- todo: handle the checkboxes 1, 2, 3 
+},
+{
+  line = "12b",
+  title = "Add Schedule 2, line 3 and line 12a and enter the total",
+  id = "fda3fe7e-40d4-4f23-a6f4-6a703b0fda41",
+  calculate = function(self)
+    return (self:GetAttachment("Schedule 2", "3") or 0) + self:GetNodeValue("12a")
+  end,
+},
+{
+  line = "13a",
+  title = "Child tax credit or credit for other dependents",
+  id = "b5ed8a86-4281-44bf-ade9-821867408a75",
+  -- todo
+},
+{
+  line = "13b",
+  title = "Add Schedule 3, line 7 and line 13a and enter the total",
+  id = "17427659-8a25-40c8-bd9d-16b93c5b9a54",
+  calculate = function(self)
+    return (self:GetAttachment("Schedule 3", "7") or 0) + self:GetNodeValue("13a")
+  end,
+},
+{
+  line = "14",
+  title = "Subtract line 13b from line 12b. If zero or less, enter 0",
+  id = "1221ba38-98bc-470b-8687-e96762817211",
+  calculate = function(self)
+    return math.max(self:SubtractNodeValue("12b", "13b"), 0)
+  end,
+},
+{
+  line = "15",
+  title = "Other taxes, including self-employment tax, from Schedule 2, line 10",
+  id = "249a84e5-66ab-489a-ae3f-ed708507bbb9",
+  calculate = function(self)
+    return self:GetAttachment("Schedule 2", "10")    
+  end,
+},
+{
+  line = "16",
+  title = "Add lines 14 and 15. This is your total tax",
+  id = "2abbaf23-788b-4929-90c6-ebf038cd1315",
+  calculate = function(self)
+    return self:SumNodeValues("14", "15")    
+  end,
+},
+{
+  line = "17",
+  title = "Federal income tax withheld from Forms W-2 and 1099",
+  id = "ea3a2295-b724-409c-8ba3-b653d11690be",
+  calculate = function(self)
+    return self:SumAllAttachments("W-2", "2") 
+    -- todo: it says or in the instructions for the following two fields
+    -- need to investigate
+    + self:SumAllAttachments("W-2G", "4")
+    + self:SumAllAttachments("1099-R", "4")
+  end,
 },
 }
-
 function m.New(userName)
   local o = document.New({
       userName = userName,
