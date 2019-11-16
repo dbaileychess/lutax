@@ -24,7 +24,7 @@ end
 local function calculateTax(amount, taxBrackets)
   if amount <= 0 then return 0 end
   if amount < 100000 then
-    -- todo handle binning of amounts under $100,000
+    amount = math.modf(amount / 50.0) * 50.0
   end
   return _calcTax(amount, taxBrackets, 1)
 end
