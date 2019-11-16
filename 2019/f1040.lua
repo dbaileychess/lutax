@@ -11,34 +11,50 @@ local mt = {
 }
 setmetatable(mt, {__index = getmetatable(document)})
 
-local singleTax = function(amount) 
+local taxRates = {0.1, 0.12, 0.22, 0.24, 0.32, 0.35, 0.37}
+
+local function _calcTax(amount, caps, i)
+  i = i or 1
+  local rate = taxRates[i]
+  local cap = caps[i] - (caps[i-1] or 0)
+  if not cap or amount <= cap then return rate * amount end
+  return rate*cap + _calcTax(amount - cap, caps, i + 1)
+end
+
+local function calculateTax(amount, taxBrackets)
+  if amount <= 0 then return 0 end
   if amount < 100000 then
-    return 0 -- todo
-  elseif amount <= 160725 then
-    return amount * 0.24 - 5825.50
-  elseif amount <= 204100 then
-    return amount * 0.32 - 18683.50
-  elseif amount < 510300 then
-    return amount * 0.35 - 24806.50
-  else
-    return amount * 0.37 - 35012.50
+    -- todo handle binning of amounts under $100,000
   end
+  return _calcTax(amount, taxBrackets, 1)
 end
 
 m.FilingStatus = {
   ["Single"] = {
     id = 1, 
     stdDeduct = 12200,
-    tax = singleTax,
+    taxBrackets = {9700,39475,84200,160725,204100,510300},
     },
   ["Married Filing Jointly"] = {
     id = 2, 
     stdDeduct = 24400,
-    tax = singleTax,
+    taxBrackets = {19400,78950,168400,321450,408200,612350},
     },
-  ["Married Filing Separately"] = {id = 3, stdDeduct = 12200,},
-  ["Head of household"] = {id = 4, stdDeduct = 18350,},
-  ["Qualifying window(er)"] = {id = 5, stdDeduct = 24000,},
+  ["Married Filing Separately"] = {
+    id = 3,
+    stdDeduct = 12200,
+    taxBrackets = {9700,39475,84200,160725,204100,306175},
+    },
+  ["Head of household"] = {
+    id = 4, 
+    stdDeduct = 18350,
+    taxBrackets = {13850,52850,84200,160700,204100,510300},
+    },
+  ["Qualifying window(er)"] = {
+    id = 5, 
+    stdDeduct = 24000,
+    taxBrackets = {19400,78950,168400,321450,408200,612350},
+    },
 }  
 
 local nodes = {
@@ -165,7 +181,7 @@ local nodes = {
   calculate = function(self)
     local taxableIncome = self:GetNodeValue("11b")
     local filingData = self:GetFilingStatusData()
-    return filingData.tax(taxableIncome)
+    return calculateTax(taxableIncome, filingData.taxBrackets)
   end,
   -- todo: handle the checkboxes 1, 2, 3 
 },
@@ -227,7 +243,44 @@ local nodes = {
     + self:SumAllAttachments("1099-R", "4")
   end,
 },
+{
+  line = "18d",
+  title = "Schedule 3, line 14",
+  id = "286c6e0d-2b46-4301-9483-9fe60688a24a",
+  calculate = function(self)
+    return self:GetAttachment("Schedule 3", "14")
+  end,
+},
+{
+  line = "18e",
+  title = "Add lines 18a through 18d. These are your total other payments and refundable credits",
+  id = "d1460c34-5110-4770-9ae6-af0de8d0a25d",
+  calculate = function(self)
+    return self:SumNodeValues("18a", "18b", "18c", "18db")
+  end,
+},
+{
+  line = "19",
+  title = "Add lines 17 and 18e. These are your total payments",
+  id = "85fd40bc-3801-49e0-be39-2610e670952e",
+  calculate = function(self)
+    return self:SumNodeValues("17", "18e")
+  end,
+},
+{
+  line = "20",
+  title = "If line 19 is more than line 16, subtract line 16 from line 19. This is the amount you overpaid",
+  id = "85fd40bc-3801-49e0-be39-2610e670952e",
+  calculate = function(self)
+    local line19 = self:GetNodeValue("19")
+    local line16 = self:GetNodeValue("16")
+    if line19 > line16 then return line19 - line16 end
+    return 0
+  end,
+},
+
 }
+
 function m.New(userName)
   local o = document.New({
       userName = userName,
