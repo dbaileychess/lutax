@@ -150,7 +150,8 @@ local nodes = {
   calculate = function(self)
     local filingData = self:GetFilingStatusData()
     local stdDeduct = filingData.stdDeduct
-    return math.max(stdDeduct, 20123)
+    local itemized = self:GetAttachment("Schedule A", "17") or 0
+    return math.max(stdDeduct, itemized)
   end,
 },
 {

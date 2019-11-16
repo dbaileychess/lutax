@@ -42,7 +42,15 @@ local nodes = {
     if line3 > line1 then return 0 end
     return line1 - line3
   end,
-  },
+},
+{
+  line = "17",
+  title = "Add the amounts in the far right column for lines 4 through 16. Also, enter this amount on Form 1040 or 1040-SR, line 9",
+  id = "15877358-69c6-4bee-9592-40432d7b23f1",
+  calculate = function(self)
+    return self:SumNodeValues("4", "7", "10", "14", "15", "16")
+  end,
+},
 }
 
 function m.New(userName, inputData)
