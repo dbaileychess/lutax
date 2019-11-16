@@ -12,7 +12,6 @@ local nodes = {
 {
   line = "1",
   title = "Wages, tips, other compensation",
-  id = "50f56bb9-e5ef-4fec-b8c0-b19abf5ae72d",
 },
 }
 

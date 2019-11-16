@@ -1,4 +1,3 @@
-local registry = require("registry")
 local node = require("node")
 
 local m = {}
@@ -9,7 +8,6 @@ function m.New(data)
   local o = {
     userName = data.userName,
     name = data.name,
-    id = data.id,
     nodes = {},
     attachments = {},
     backAttachments = {},
@@ -28,7 +26,6 @@ function mt:AddNode(nodeDef)
   local n = node.New(nodeDef)
   self.nodes[n.line] = n
   self.nodes[#self.nodes + 1] = n -- add in sorted order as well
-  registry.Add(n, self)
 end
 
 function mt:Attach(...)
@@ -92,10 +89,6 @@ end
 
 function mt:GetNodeValue(id)
   local node = self.nodes[id]
-  if not node then 
-    -- if we couldn't find it locally, try searching the registry
-    node = registry.Get(id, self)
-  end
   if not node then return nil end
   return node(self)
 end

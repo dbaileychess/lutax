@@ -12,7 +12,6 @@ local nodes = {
 {
   line = "8",
   title = "Tax-exempt interest",
-  id = "ede59e31-1294-4c0e-a1e8-a961d1ddcfea",
 },
 }
 

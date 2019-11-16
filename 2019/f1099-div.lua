@@ -12,7 +12,6 @@ local nodes = {
 {
   line = "1b",
   title = "Qualified Dividends",
-  id = "36f82c1d-87d2-49af-8f16-8b743532e02d",
 },
 }
 

@@ -5,7 +5,6 @@ function m.New(data)
   local o = {
     document = data.document,
     line = data.line,
-    id = data.id,
     title = data.title,
     calculate = data.calculate,
     default = data.default or 0
