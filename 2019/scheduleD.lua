@@ -3,19 +3,18 @@ local node = require("node")
 
 local m = {}
 local mt = {
-  name = "1099-INT (2019)",
-  id = "1099-INT",
+  name = "Schedule D (2019)",
+  id = "Schedule D",
 }
 setmetatable(mt, {__index = getmetatable(document)})
 
 local nodes = {
 {
-  line = "1",
-  title = "Interest income",
-},
-{
-  line = "8",
-  title = "Tax-exempt interest",
+  line = "1d",
+  title = "Short-term proceeds",
+  calculate = function(self)
+    
+  end,
 },
 }
 

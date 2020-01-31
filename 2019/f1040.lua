@@ -91,23 +91,29 @@ local nodes = {
   line = "3a",
   title = "Qualified Dividends",
   calculate = function(self)
-    -- grab all the 1099-int and sum Line 1b
-    return self:SumAllAttachments("1099-INT", "1b")
+    -- grab all the 1099-DIV and sum Line 1b
+    return self:SumAllAttachments("1099-DIV", "1b")
   end,
 },
 {
   line = "3b",
   title = "Ordinary dividends. Attach Sch. B",
   calculate = function(self)
-    -- grab all the 1099-int and sum Line 1a
-    return self:SumAllAttachments("1099-INT", "1a")
+    -- grab all the 1099-cDIVE and sum Line 1a
+    return self:SumAllAttachments("1099-DIV", "1a")
+  end,
+},
+{
+  line = "6",
+  title = "Capital gain or (loss). Attach Schedule D if required.",
+  calculate = function(self)
+    return self:GetAttachment("Schedule D", "21") or 0
   end,
 },
 {
   line = "7a",
   title = "Other income from Schedule 1, line 9",
   calculate = function(self)
-    -- grab Schedule 1 line 9
     return self:GetAttachment("Schedule 1", "9") or 0
   end,
 },
@@ -122,8 +128,7 @@ local nodes = {
   line = "8a",
   title = "Adjustments to income from Schedule 1, line 22",
   calculate = function(self)
-    -- grab Schedule 1 line 22
-    return self:GetAttachment("Schedule 1", "22")    
+    return self:GetAttachment("Schedule 1", "22") or 0    
   end,
 },
 {

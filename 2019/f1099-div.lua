@@ -10,8 +10,16 @@ setmetatable(mt, {__index = getmetatable(document)})
 
 local nodes = {
 {
+  line = "1a",
+  title = "Total ordinary dividends",
+},
+{
   line = "1b",
   title = "Qualified Dividends",
+},
+{ 
+  line = "11",
+  title = "Exempt-interest dividends",
 },
 }
 
