@@ -13,6 +13,10 @@ local nodes = {
   line = "1",
   title = "Wages, tips, other compensation",
 },
+{
+  line = "17",
+  title = "State income tax",
+},
 }
 
 function m.New(userName, inputData)

@@ -84,7 +84,7 @@ local nodes = {
   title = "Taxable interest. Attach Sch. B",
   calculate = function(self)
     -- grab Schedule B line 4
-    return self:GetAttachment("Schedule B", "4") or 0
+    return self:GetAttachmentValue("Schedule B", "4") or 0
   end,
 },
 {
@@ -107,14 +107,14 @@ local nodes = {
   line = "6",
   title = "Capital gain or (loss). Attach Schedule D if required.",
   calculate = function(self)
-    return self:GetAttachment("Schedule D", "21") or 0
+    return self:GetAttachmentValue("Schedule D", "21") or 0
   end,
 },
 {
   line = "7a",
   title = "Other income from Schedule 1, line 9",
   calculate = function(self)
-    return self:GetAttachment("Schedule 1", "9") or 0
+    return self:GetAttachmentValue("Schedule 1", "9") or 0
   end,
 },
 {
@@ -128,7 +128,7 @@ local nodes = {
   line = "8a",
   title = "Adjustments to income from Schedule 1, line 22",
   calculate = function(self)
-    return self:GetAttachment("Schedule 1", "22") or 0    
+    return self:GetAttachmentValue("Schedule 1", "22") or 0    
   end,
 },
 {
@@ -142,9 +142,8 @@ local nodes = {
   line = "9",
   title = "Standard deduction or itemized deductions",
   calculate = function(self)
-    local filingData = self:GetFilingStatusData()
-    local stdDeduct = filingData.stdDeduct
-    local itemized = self:GetAttachment("Schedule A", "17") or 0
+    local stdDeduct = self:GetFilingStatusData().stdDeduct
+    local itemized = self:GetAttachmentValue("Schedule A", "17") or 0
     return math.max(stdDeduct, itemized)
   end,
 },
@@ -180,7 +179,7 @@ local nodes = {
   line = "12b",
   title = "Add Schedule 2, line 3 and line 12a and enter the total",
   calculate = function(self)
-    return (self:GetAttachment("Schedule 2", "3") or 0) + self:GetNodeValue("12a")
+    return (self:GetAttachmentValue("Schedule 2", "3") or 0) + self:GetNodeValue("12a")
   end,
 },
 {
@@ -192,7 +191,7 @@ local nodes = {
   line = "13b",
   title = "Add Schedule 3, line 7 and line 13a and enter the total",
   calculate = function(self)
-    return (self:GetAttachment("Schedule 3", "7") or 0) + self:GetNodeValue("13a")
+    return (self:GetAttachmentValue("Schedule 3", "7") or 0) + self:GetNodeValue("13a")
   end,
 },
 {
@@ -206,7 +205,7 @@ local nodes = {
   line = "15",
   title = "Other taxes, including self-employment tax, from Schedule 2, line 10",
   calculate = function(self)
-    return self:GetAttachment("Schedule 2", "10")    
+    return self:GetAttachmentValue("Schedule 2", "10")    
   end,
 },
 {
@@ -231,7 +230,7 @@ local nodes = {
   line = "18d",
   title = "Schedule 3, line 14",
   calculate = function(self)
-    return self:GetAttachment("Schedule 3", "14")
+    return self:GetAttachmentValue("Schedule 3", "14")
   end,
 },
 {

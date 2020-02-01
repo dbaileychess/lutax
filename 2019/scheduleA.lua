@@ -24,9 +24,9 @@ local nodes = {
 },
 {
   line = "3",
-  title = "Multiple line 2 by 10% (0.10)",
+  title = "Multiple line 2 by 7.50% (0.075)",
   calculate = function(self)
-    return 0.10 * self:GetNodeValue("2")
+    return 0.075 * self:GetNodeValue("2")
   end,
 },
 {
@@ -40,10 +40,54 @@ local nodes = {
   end,
 },
 {
+  line = "5a",
+  title = "State and local taxes",
+  calculate = function(self)
+    local f1040 = self:GetBackwardsAttachment("Form 1040")
+    return f1040:SumAllAttachments("W-2", "17")
+  end,
+},
+{ 
+  line = "5d",
+  title = "Add lines 5a through 5c",
+  calculate = function(self) 
+    return self:SumNodeValues("5a")
+  end,
+},
+{
+  line = "5e",
+  title = "Enter the smaller of line 5d or $10,000 ($5,000) if married filing separately",
+  calculate = function(self)
+    local f1040 = self:GetBackwardsAttachment("Form 1040")
+    local filingStatus = f1040:GetNodeValue("filingStatus")
+    local max = filingStatus == "Married Filing Separately" and 5000 or 10000
+    return math.min(max, self:GetNodeValue("5d"))
+  end,
+},
+{
+  line = "7",
+  title = "Add lines 5e and 6",
+  calculate = function(self)
+    return self:SumNodeValues("5e", "6")
+  end,
+  },
+{ 
+  line = "11",
+  title = "Gifts by cash or check",
+},
+{ 
+  line = "12",
+  title = "Gifts other than by cash or check",
+  calculate = function(self)
+    -- todo: this should sum all the h columns
+    return self:GetAttachmentValue("Form 8283", "1ah") or 0
+  end,
+},
+{
   line = "17",
   title = "Add the amounts in the far right column for lines 4 through 16. Also, enter this amount on Form 1040 or 1040-SR, line 9",
   calculate = function(self)
-    return self:SumNodeValues("4", "7", "10", "14", "15", "16")
+    return self:SumNodeValues("4", "7", "10", "11", "12", "14", "15", "16")
   end,
 },
 }
