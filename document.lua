@@ -82,9 +82,11 @@ function mt:SetValue(identifier, value)
     error("Cannot understand identifier type:",identifier, type(identifier))
   end
   
-  assert(node, "Cannot find node for identifier:",identifier, type(identifier))
- 
-  node:SetValue(value)    
+  if node then
+    node:SetValue(value)
+  else
+    print("[WARN] Cannot find node "..identifier .." for form: ".. self.name)
+  end
 end
 
 function mt:GetNodeValue(id)

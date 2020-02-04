@@ -76,15 +76,20 @@ local nodes = {
   title = "Tax-exempt interest",
   calculate = function(self)
     -- grab all the 1099-int and sum Line 8
-    return self:SumAllAttachments("1099-INT", "8")
+    return self:SumAllAttachments("1099-INT", "8") 
+      + self:SumAllAttachments("1099-DIV", "11") 
+      + self:SumAllAttachments("1099-OID", "2")
   end,
 },
 {
   line = "2b",
   title = "Taxable interest. Attach Sch. B",
   calculate = function(self)
-    -- grab Schedule B line 4
-    return self:GetAttachmentValue("Schedule B", "4") or 0
+    local taxableInterest = self:SumAllAttachments("1099-INT", "1")
+    if taxableInterest <= 1500 then
+      return taxableInterest
+    end    
+    return assert(self:GetAttachmentValue("Schedule B", "4"), "Schedule B needs to be filled out")
   end,
 },
 {
